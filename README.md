@@ -21,7 +21,7 @@ Only Arduino Uno CPU is tested yet.
 
 ##Schematic View
 
-![](wiring_schema.svg)
+![](wiring_schema.png)
 
 
 ##Prototype view

@@ -55,6 +55,31 @@
 #define STEPPERS_DISABLE_BIT    0  // Uno Digital Pin 8
 #define STEPPERS_DISABLE_MASK   (1<<STEPPERS_DISABLE_BIT)
 
+#ifdef PUNCH_ACTIVATED
+
+    #define PUNCH_DDR DDRB
+    #define PUNCH_PIN PINB
+    #define PUNCH_PORT PORTB
+    #define PUNCH_DOWN_ENABLE_BIT   4 // Uno Digital Pin 12
+    #define PUNCH_UP_ENABLE_BIT   5 // Uno Digital Pin 13
+
+
+    // inputs for actuator state 
+    #define PUNCH_SENSOR_DDR DDRC
+    #define PUNCH_SENSOR_PORT      PORTC
+    #define PUNCH_SENSOR_PIN PINC
+
+    #define PUNCH_SENSOR_DOWN_BIT       5  // Uno Analog Pin 5
+    #define PUNCH_SENSOR_DOWN_MASK      (1<<PUNCH_SENSOR_DOWN_BIT)
+
+    #define PUNCH_SENSOR_UP_BIT       4  // Uno Analog Pin 4
+    #define PUNCH_SENSOR_UP_MASK      (1<<PUNCH_SENSOR_UP_BIT)
+
+    
+
+#endif
+
+
 // Define homing/hard limit switch input pins and limit interrupt vectors. 
 // NOTE: All limit bit pins must be on the same port, but not on a port with other input pins (CONTROL).
 #define LIMIT_DDR        DDRB
@@ -76,34 +101,39 @@
 #define SPINDLE_ENABLE_DDR    DDRB
 #define SPINDLE_ENABLE_PORT   PORTB
 // Z Limit pin and spindle PWM/enable pin swapped to access hardware PWM on Pin 11.
-#ifdef VARIABLE_SPINDLE 
-  #ifdef USE_SPINDLE_DIR_AS_ENABLE_PIN
-    // If enabled, spindle direction pin now used as spindle enable, while PWM remains on D11.
-    #define SPINDLE_ENABLE_BIT    5  // Uno Digital Pin 13 (NOTE: D13 can't be pulled-high input due to LED.)
+#ifndef PUNCH_ACTIVATED
+  #ifdef VARIABLE_SPINDLE 
+    #ifdef USE_SPINDLE_DIR_AS_ENABLE_PIN
+      // If enabled, spindle direction pin now used as spindle enable, while PWM remains on D11.
+      #define SPINDLE_ENABLE_BIT    5  // Uno Digital Pin 13 (NOTE: D13 can't be pulled-high input due to LED.)
+    #else
+      #define SPINDLE_ENABLE_BIT    3  // Uno Digital Pin 11
+    #endif
   #else
-    #define SPINDLE_ENABLE_BIT    3  // Uno Digital Pin 11
+    #define SPINDLE_ENABLE_BIT    4  // Uno Digital Pin 12
   #endif
-#else
-  #define SPINDLE_ENABLE_BIT    4  // Uno Digital Pin 12
-#endif
-#ifndef USE_SPINDLE_DIR_AS_ENABLE_PIN
-  #define SPINDLE_DIRECTION_DDR   DDRB
-  #define SPINDLE_DIRECTION_PORT  PORTB
-  #define SPINDLE_DIRECTION_BIT   5  // Uno Digital Pin 13 (NOTE: D13 can't be pulled-high input due to LED.)
-#endif
-  
+
+
+  #ifndef USE_SPINDLE_DIR_AS_ENABLE_PIN
+    #define SPINDLE_DIRECTION_DDR   DDRB
+    #define SPINDLE_DIRECTION_PORT  PORTB
+    #define SPINDLE_DIRECTION_BIT   5  // Uno Digital Pin 13 (NOTE: D13 can't be pulled-high input due to LED.)
+  #endif
+#endif  
 // Define flood and mist coolant enable output pins.
 // NOTE: Uno analog pins 4 and 5 are reserved for an i2c interface, and may be installed at
 // a later date if flash and memory space allows.
-#define COOLANT_FLOOD_DDR   DDRC
-#define COOLANT_FLOOD_PORT  PORTC
-#define COOLANT_FLOOD_BIT   3  // Uno Analog Pin 3
-#ifdef ENABLE_M7 // Mist coolant disabled by default. See config.h to enable/disable.
-  #define COOLANT_MIST_DDR   DDRC
-  #define COOLANT_MIST_PORT  PORTC
-  #define COOLANT_MIST_BIT   4 // Uno Analog Pin 4
-#endif  
 
+#ifndef PUNCH_ACTIVATED
+  #define COOLANT_FLOOD_DDR   DDRC
+  #define COOLANT_FLOOD_PORT  PORTC
+  #define COOLANT_FLOOD_BIT   3  // Uno Analog Pin 3
+  #ifdef ENABLE_M7 // Mist coolant disabled by default. See config.h to enable/disable.
+    #define COOLANT_MIST_DDR   DDRC
+    #define COOLANT_MIST_PORT  PORTC
+    #define COOLANT_MIST_BIT   4 // Uno Analog Pin 4
+  #endif  
+#endif
 // Define user-control controls (cycle start, reset, feed hold) input pins.
 // NOTE: All CONTROLs pins must be on the same port and not on a port with other input pins (limits).
 #define CONTROL_DDR       DDRC
@@ -120,11 +150,13 @@
 #define CONTROL_INVERT_MASK CONTROL_MASK // May be re-defined to only invert certain control pins.
   
 // Define probe switch input pin.
-#define PROBE_DDR       DDRC
-#define PROBE_PIN       PINC
-#define PROBE_PORT      PORTC
-#define PROBE_BIT       5  // Uno Analog Pin 5
-#define PROBE_MASK      (1<<PROBE_BIT)
+#ifndef PUNCH_ACTIVATED
+  #define PROBE_DDR       DDRC
+  #define PROBE_PIN       PINC
+  #define PROBE_PORT      PORTC
+  #define PROBE_BIT       5  // Uno Analog Pin 5
+  #define PROBE_MASK      (1<<PROBE_BIT)
+#endif
 
 // Start of PWM & Stepper Enabled Spindle
 #ifdef VARIABLE_SPINDLE

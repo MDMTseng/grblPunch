@@ -232,20 +232,27 @@
 // tool length offset value is subtracted from the current location.
 #define TOOL_LENGTH_OFFSET_AXIS Z_AXIS // Default z-axis. Valid values are X_AXIS, Y_AXIS, or Z_AXIS.
 
+
+#define PUNCH_ACTIVATED
+
+
 // Enables variable spindle output voltage for different RPM values. On the Arduino Uno, the spindle
 // enable pin will output 5V for maximum RPM with 256 intermediate levels and 0V when disabled.
 // NOTE: IMPORTANT for Arduino Unos! When enabled, the Z-limit pin D11 and spindle enable pin D12 switch!
 // The hardware PWM output on pin D11 is required for variable spindle output voltages.
-#define VARIABLE_SPINDLE // Default enabled. Comment to disable.
 
-// Used by the variable spindle output only. These parameters set the maximum and minimum spindle speed
-// "S" g-code values to correspond to the maximum and minimum pin voltages. There are 256 discrete and 
-// equally divided voltage bins between the maximum and minimum spindle speeds. So for a 5V pin, 1000
-// max rpm, and 250 min rpm, the spindle output voltage would be set for the following "S" commands: 
-// "S1000" @ 5V, "S250" @ 0.02V, and "S625" @ 2.5V (mid-range). The pin outputs 0V when disabled.
-#define SPINDLE_MAX_RPM 1000.0 // Max spindle RPM. This value is equal to 100% duty cycle on the PWM.
-#define SPINDLE_MIN_RPM 0.0    // Min spindle RPM. This value is equal to (1/256) duty cycle on the PWM.
+#ifndef PUNCH_ACTIVATED
+    #define VARIABLE_SPINDLE // Default enabled. Comment to disable.
 
+    // Used by the variable spindle output only. These parameters set the maximum and minimum spindle speed
+    // "S" g-code values to correspond to the maximum and minimum pin voltages. There are 256 discrete and 
+    // equally divided voltage bins between the maximum and minimum spindle speeds. So for a 5V pin, 1000
+    // max rpm, and 250 min rpm, the spindle output voltage would be set for the following "S" commands: 
+    // "S1000" @ 5V, "S250" @ 0.02V, and "S625" @ 2.5V (mid-range). The pin outputs 0V when disabled.
+    #define SPINDLE_MAX_RPM 1000.0 // Max spindle RPM. This value is equal to 100% duty cycle on the PWM.
+    #define SPINDLE_MIN_RPM 0.0    // Min spindle RPM. This value is equal to (1/256) duty cycle on the PWM.
+
+#endif
 // Used by variable spindle output only. This forces the PWM output to a minimum duty cycle when enabled.
 // When disabled, the PWM pin will still read 0V. Most users will not need this option, but it may be 
 // useful in certain scenarios. This setting does not update the minimum spindle RPM calculations. Any

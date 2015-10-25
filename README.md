@@ -28,8 +28,8 @@ Only Arduino Uno CPU is tested yet.
 
 ![](proto_view.png)
 
-##Video demonstrating the new GCode
+##Video demonstrating the new GCode Command
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Sks70Pnujw8" frameborder="0" allowfullscreen></iframe>
+[https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
 
 

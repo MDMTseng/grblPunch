@@ -33,3 +33,12 @@ Only Arduino Uno CPU is tested yet.
 [https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
 
 
+##Improvments (TODO)
+
+- Check at startup that the punch is up, before starting (part of the homing cycle checks)
+
+- by settings, 
+    - able to use a "pull up" logic on the hard limit
+    - or use two 0-1 detector on both side of the X axis
+
+

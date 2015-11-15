@@ -97,8 +97,11 @@ void punch_wait_sensor_state(int punchbittowait) {
 void punch()
 {
 
+    if (sys.state == STATE_CHECK_MODE) { return ;}
+
     punch_stop();
 
+    protocol_buffer_synchronize();
     // wait for the end of move
     do {
        protocol_execute_realtime();

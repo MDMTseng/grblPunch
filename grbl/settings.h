@@ -75,6 +75,18 @@
 #define AXIS_SETTINGS_START_VAL  100 // NOTE: Reserving settings values >= 100 for axis settings. Up to 255.
 #define AXIS_SETTINGS_INCREMENT  10  // Must be greater than the number of axis settings
 
+
+// GRBL Punch parameters
+//
+#define DEFAULT_PUNCH_ACTUATOR_INVERT_MASK 0
+#define DEFAULT_PUNCH_SENSOR_INVERT_MASK 0
+
+#define BITFLAG_PUNCH_ACTUATOR_UP bit(0)
+#define BITFLAG_PUNCH_ACTUATOR_DOWN bit(1)
+
+#define BITFLAG_PUNCH_SENSOR_UP bit(0)
+#define BITFLAG_PUNCH_SENSOR_DOWN bit(1)
+
 // Global persistent settings (Stored from byte EEPROM_ADDR_GLOBAL onwards)
 typedef struct {
   // Axis settings
@@ -99,6 +111,11 @@ typedef struct {
   float homing_seek_rate;
   uint16_t homing_debounce_delay;
   float homing_pulloff;
+
+  // grblPunch settings
+  uint8_t punch_actuator_invert_mask;
+  uint8_t punch_sensor_invert_mask;
+
 } settings_t;
 extern settings_t settings;
 

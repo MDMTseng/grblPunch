@@ -25,19 +25,38 @@
 #define COMMAND_PUNCH_UNACTIVATED 0
 #define COMMAND_PUNCH_DOWN 1
 #define COMMAND_PUNCH_UP 2
+
+void set_punch_bit(uint8_t bit, uint8_t value) 
+{
+    uint8_t inverted = 0;
+    if (bit == PUNCH_DOWN_ENABLE_BIT) {
+        inverted = BITFLAG_PUNCH_ACTUATOR_DOWN;
+    } else if (bit == PUNCH_UP_ENABLE_BIT) {
+        inverted = BITFLAG_PUNCH_ACTUATOR_UP;
+    }
+   
+    value = value ^ bit_istrue(settings.punch_actuator_invert_mask, inverted); 
+    
+    if(value) {
+        PUNCH_PORT |= (1 << bit);
+    } else {
+        PUNCH_PORT &= ~(1<< bit);
+    }
+}
+
+
 void punch_activate_actuator(int direction)
 {
    if (direction == COMMAND_PUNCH_UNACTIVATED) {
-     PUNCH_PORT &= ~(1<<PUNCH_DOWN_ENABLE_BIT); // disable punch down
-     PUNCH_PORT &= ~(1<<PUNCH_UP_ENABLE_BIT); // disable punch up
+     set_punch_bit(PUNCH_DOWN_ENABLE_BIT, 0);
+     set_punch_bit(PUNCH_UP_ENABLE_BIT, 0);
    } else if (direction == COMMAND_PUNCH_DOWN) {
-     PUNCH_PORT &= ~(1<<PUNCH_UP_ENABLE_BIT); // disable punch up
-     PUNCH_PORT |= (1<<PUNCH_DOWN_ENABLE_BIT);
+     set_punch_bit(PUNCH_UP_ENABLE_BIT, 0);
+     set_punch_bit(PUNCH_DOWN_ENABLE_BIT, 1);
    } else if (direction == COMMAND_PUNCH_UP) {
-     PUNCH_PORT &= ~(1<<PUNCH_DOWN_ENABLE_BIT);
-      PUNCH_PORT |= (1<<PUNCH_UP_ENABLE_BIT); // disable punch up
+     set_punch_bit(PUNCH_DOWN_ENABLE_BIT, 0);
+     set_punch_bit(PUNCH_UP_ENABLE_BIT, 1);
    }
-
 }
 
 void wait_a_bit() {
@@ -57,9 +76,8 @@ void punch_init()
 {    
 
   #ifndef CPU_MAP_ATMEGA328P
-    #error("unsupported cpu for punch machine")
+    #error("unsupported cpu for punch machine, only arduino supported")
   #endif
-
 
   PUNCH_DDR |= (1<<PUNCH_DOWN_ENABLE_BIT); // Configure as output pin.
   PUNCH_DDR |= (1<<PUNCH_UP_ENABLE_BIT); // Configure as output pin.
@@ -67,6 +85,7 @@ void punch_init()
   // configure the analog pins as input for sensor
   PUNCH_SENSOR_DDR = PUNCH_SENSOR_DDR & (PUNCH_SENSOR_DOWN_MASK | PUNCH_SENSOR_UP_MASK);
   punch_activate_actuator(COMMAND_PUNCH_UP); 
+
 }
 
 
@@ -77,19 +96,33 @@ void punch_stop()
 }
 
 
+uint8_t get_punch_sensor_value(uint8_t bit) 
+{
+    uint8_t v = PUNCH_SENSOR_PIN;
+    uint8_t value = bit_istrue(v, bit);
+
+    uint8_t inverted = 0;
+    if (bit == PUNCH_SENSOR_DOWN_BIT) {
+        inverted = BITFLAG_PUNCH_SENSOR_DOWN;
+    } else if (bit == PUNCH_SENSOR_UP_BIT) {
+        inverted = BITFLAG_PUNCH_SENSOR_UP;
+    }
+   
+    return value ^ bit_istrue(settings.punch_sensor_invert_mask , inverted);
+}
+
+
+
 void punch_wait_sensor_state(int punchbittowait) {
 
-    uint8_t pin = (PUNCH_SENSOR_PIN & (PUNCH_SENSOR_DOWN_MASK | PUNCH_SENSOR_UP_MASK));
 
-     while(bit_istrue(pin,bit(punchbittowait))) {
-      // noop    
-        	__asm__ __volatile__ (
-		"nop" "\n\t"
-		"nop" "\n\t"
-		"nop" "\n\t"
-		"nop"); //just waiting 4 cycles
-
-         pin = (PUNCH_SENSOR_PIN & (PUNCH_SENSOR_DOWN_MASK | PUNCH_SENSOR_UP_MASK));
+     while(get_punch_sensor_value(punchbittowait) == 0) {
+        // noop    
+       	__asm__ __volatile__ (
+		 "nop" "\n\t"
+		 "nop" "\n\t"
+		 "nop" "\n\t"
+		 "nop"); //just waiting 4 cycles
      }
 
 }
@@ -101,6 +134,7 @@ void punch()
 
     punch_stop();
 
+    // wait for current awaited commands
     protocol_buffer_synchronize();
     // wait for the end of move
     do {

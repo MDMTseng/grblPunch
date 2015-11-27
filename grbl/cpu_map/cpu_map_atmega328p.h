@@ -60,6 +60,7 @@
     #define PUNCH_DDR DDRB
     #define PUNCH_PIN PINB
     #define PUNCH_PORT PORTB
+
     #define PUNCH_DOWN_ENABLE_BIT   4 // Uno Digital Pin 12
     #define PUNCH_UP_ENABLE_BIT   5 // Uno Digital Pin 13
 

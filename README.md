@@ -1,9 +1,11 @@
 
 #Patch for GRBL project supporting the creation of punch machine for barrel organs.
 
-The original Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl)
+The original GRBL Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl) this project is a fork specialized in punch machines as below. It has a X and Y axis plus a punch command for punching holes in the barrel organ book.
 
 ![](tutorial/perfo_nov15.jpg)
+
+Punch machine designed and constructed by Jean Pierre Rosset.
 
 
 ##Introduction

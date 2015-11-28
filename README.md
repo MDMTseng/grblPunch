@@ -8,7 +8,7 @@ The original Project is located at : [http://github.com/grbl/grbl](http://github
 
 ##Introduction
 
-This patch add a new <b>M100 GCode<b> command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire the punch actuators and sensor and use them in a GCode program
+This patch add a new <b>M100 GCode</b> command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire the punch actuators and sensor and use them in a GCode program
 
 The punch cycle introducted is the following
 

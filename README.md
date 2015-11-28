@@ -17,6 +17,8 @@ The punch cycle introducted is the following
 at least you must have two sensors for the punch positions (up and down). the activation of the up actuator is optional as some punch actuator, once desactivated, move up the punch.
 
 
+Only Arduino Uno CPU is supported yet in this version.
+
 ##Grbl introducted modifications
 
 In the adjustment of grbl software :
@@ -26,6 +28,47 @@ In the adjustment of grbl software :
 - The A4 and A5 pins for detecting the state of the punch (up or down)
 
 All other pins are remained the same.
+
+
+
+##Arduino Uno connexions used by this patch
+
+
+##Schematic View
+
+![](wiring_schema.png)
+
+
+##Prototype view
+
+![](proto_view.png)
+
+##Video demonstrating the new GCode Command
+
+[https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
+
+
+#Install the Grbl Punch software on Arduino Uno
+
+the Easiest way to install the software is to use the XLoader software 
+
+you can download this software at this url [http://russemotto.com/xloader/](http://russemotto.com/xloader/)
+
+Launch XLoader
+
+![](tutorial/XLoader.png)
+
+Upload the grblPunch.hex file, 
+
+![](tutorial/upload.png)
+
+
+That's all
+
+You can then use the universal code sender to connect and configure the elements.
+
+![](tutorial/ucs1.png)
+
 
 ##Settings 
 
@@ -115,27 +158,6 @@ you can change a setting value using
 	$33=1
 
 
-
-
-
-Only Arduino Uno CPU is supported yet in this version.
-
-
-##Arduino Uno connexions used by this patch
-
-
-##Schematic View
-
-![](wiring_schema.png)
-
-
-##Prototype view
-
-![](proto_view.png)
-
-##Video demonstrating the new GCode Command
-
-[https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
 
 
 ##Improvments (TODO)

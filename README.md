@@ -3,7 +3,7 @@
 
 The original Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl)
 
-![](tutorial/perfo_35r.jpg)
+![](tutorial/perfo_nov15.jpg)
 
 
 ##Introduction
@@ -89,6 +89,26 @@ the $32 and $33 settings permit to invert the detection of the punch position.
 	<th>setting</th>
 	<th>value</th>
 	<th>description</th>
+</tr>
+<tr>
+	<td>$30</td>
+	<td>0</td>
+	<td><b>The punch down</b> actuator is activated if the PIN is at <b>"5v"</b></td>
+</tr>
+<tr>
+	<td>$30</td>
+	<td>1</td>
+	<td><b>The punch down</b> actuator is activated if the PIN is at <b>"0v"</b></td>
+</tr>
+<tr>
+	<td>$31</td>
+	<td>0</td>
+	<td><b>The punch up</b> actuator is activated if the PIN is at <b>"5v"</b></td>
+</tr>
+<tr>
+	<td>$31</td>
+	<td>1</td>
+	<td><b>The punch up</b> actuator is activated if the PIN is at <b>"0v"</b></td>
 </tr>
 <tr>
 	<td>$32</td>

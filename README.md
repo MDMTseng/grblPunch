@@ -3,9 +3,12 @@
 
 The original Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl)
 
+![](tutorial/perfo_35r.jpg)
+
+
 ##Introduction
 
-This patch add a new M100 GCode command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire the punch actuators and sensor and use them in a GCode program
+This patch add a new <b>M100 GCode<b> command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire the punch actuators and sensor and use them in a GCode program
 
 The punch cycle introducted is the following
 
@@ -160,12 +163,20 @@ you can change a setting value using
 
 
 
-##Improvments (TODO)
+##Improvements - RoadMap
+
+
+
+<b>2015 - November</b>
+
+- <strike>by settings, 
+    - able to use a "pull up" logic on the hard limit
+    - or use two 0-1 detector on both side of the X axis</strike>
+
+<b>2015 - November</b>
+
+- Validation of the master branch with a real machine
+
+<b>Todo</b>
 
 - Check at startup that the punch is up, before starting (part of the homing cycle checks)
-
-- by settings, 
-    - able to use a "pull up" logic on the hard limit
-    - or use two 0-1 detector on both side of the X axis
-
-

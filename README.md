@@ -115,12 +115,12 @@ the $32 and $33 settings permit to invert the detection of the punch position.
 <tr>
 	<td>$32</td>
 	<td>0</td>
-	<td><b>The punch down</b> is detected up if the sensor is <b>"0v"</b></td>
+	<td><b>The punch down</b> is detected down if the sensor is <b>"0v"</b></td>
 </tr>
 <tr>
 	<td>$32</td>
 	<td>1</td>
-	<td><b>The punch down</b> is detected up if the sensor is <b>"5v"</b></td>
+	<td><b>The punch down</b> is detected down if the sensor is <b>"5v"</b></td>
 </tr>
 <tr>
 	<td>$33</td>

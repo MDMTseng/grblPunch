@@ -70,10 +70,10 @@
     #define PUNCH_SENSOR_PORT      PORTC
     #define PUNCH_SENSOR_PIN PINC
 
-    #define PUNCH_SENSOR_DOWN_BIT       5  // Uno Analog Pin 5
+    #define PUNCH_SENSOR_DOWN_BIT       4  // Uno Analog Pin 5
     #define PUNCH_SENSOR_DOWN_MASK      (1<<PUNCH_SENSOR_DOWN_BIT)
 
-    #define PUNCH_SENSOR_UP_BIT       4  // Uno Analog Pin 4
+    #define PUNCH_SENSOR_UP_BIT       5  // Uno Analog Pin 4
     #define PUNCH_SENSOR_UP_MASK      (1<<PUNCH_SENSOR_UP_BIT)
 
     

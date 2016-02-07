@@ -98,8 +98,8 @@ void punch_stop()
 
 uint8_t get_punch_sensor_value(uint8_t bit) 
 {
-    uint8_t v = PUNCH_SENSOR_PIN;
-    uint8_t value = bit_istrue(v, bit);
+    volatile uint8_t v = PUNCH_SENSOR_PIN & (PUNCH_SENSOR_DOWN_MASK | PUNCH_SENSOR_UP_MASK);
+    uint8_t value = bit_istrue(v, bit( bit));
 
     uint8_t inverted = 0;
     if (bit == PUNCH_SENSOR_DOWN_BIT) {
@@ -107,8 +107,14 @@ uint8_t get_punch_sensor_value(uint8_t bit)
     } else if (bit == PUNCH_SENSOR_UP_BIT) {
         inverted = BITFLAG_PUNCH_SENSOR_UP;
     }
-   
-    return value ^ bit_istrue(settings.punch_sensor_invert_mask , inverted);
+
+    if (bit_istrue(settings.punch_sensor_invert_mask , inverted) != 0)
+    {
+        if (value)
+            return 1;
+        return 0; 
+    }
+    return value == 0;
 }
 
 

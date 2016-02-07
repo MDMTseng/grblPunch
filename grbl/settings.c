@@ -93,7 +93,7 @@ void settings_restore(uint8_t restore_flag) {
 	settings.max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL);    
 
     settings.punch_actuator_invert_mask = DEFAULT_PUNCH_ACTUATOR_INVERT_MASK;
-    settings.punch_actuator_invert_mask = DEFAULT_PUNCH_SENSOR_INVERT_MASK;
+    settings.punch_sensor_invert_mask = DEFAULT_PUNCH_SENSOR_INVERT_MASK;
 
 	write_global_settings();
   }

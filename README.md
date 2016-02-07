@@ -187,7 +187,9 @@ you can change a setting value using
 
 ##Improvements - RoadMap
 
+<b>2016 - February</b>
 
+- fix sensor detection, additional material has been setted up, we still need 2 sensors for the punch (eliminating the time in the equation)
 
 <b>2015 - November</b>
 

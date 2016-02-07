@@ -68,6 +68,8 @@ Upload the grblPunch.hex file,
 ![](tutorial/upload.png)
 
 
+**Warning : please download the hole project as a zip file, and take the grblPunch.hex file from it. Using internet Explorer to save the file as a text file can corrupt the file.**
+
 That's all
 
 You can then use the universal code sender to connect and configure the elements.

@@ -129,6 +129,8 @@ void punch_wait_sensor_state(int punchbittowait) {
 		 "nop" "\n\t"
 		 "nop" "\n\t"
 		 "nop"); //just waiting 4 cycles
+        
+         protocol_execute_realtime();
 
          if (sys.abort) { return; }
 
@@ -151,6 +153,8 @@ void punch()
        if (sys.abort) { return; }
     } while ( sys.state != STATE_IDLE );
 
+	bit_true_atomic(sys_rt_exec_state, EXEC_FEED_HOLD); // Use feed hold for program pause.
+
     punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
 
     punch_activate_actuator(COMMAND_PUNCH_DOWN);
@@ -172,7 +176,8 @@ void punch()
     // activate the punch up, and release the down
     punch_wait_sensor_state(PUNCH_SENSOR_UP_BIT);
 
-    // wait_a_bit();
+    bit_false_atomic(sys_rt_exec_state, EXEC_FEED_HOLD); // Use feed hold for program pause.
+
 }
 
 

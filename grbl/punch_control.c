@@ -129,6 +129,9 @@ void punch_wait_sensor_state(int punchbittowait) {
 		 "nop" "\n\t"
 		 "nop" "\n\t"
 		 "nop"); //just waiting 4 cycles
+
+         if (sys.abort) { return; }
+
      }
 
 }

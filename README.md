@@ -3,6 +3,9 @@
 
 The original GRBL Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl) this project is a fork specialized in punch machines as below. It has a X and Y axis plus a punch command for punching holes in the barrel organ book.
 
+This GRBL project has a gui for handling the punch plan, and grbl control using a PC, Mac or Linux. please see the associated software website : [www.barrel-organ-discovery.org](http://www.barrel-organ-discovery.org/site/krunch.html)
+
+
 ![](tutorial/perfo_nov15.jpg)
 
 Punch machine designed and constructed by Jean Pierre Rosset.

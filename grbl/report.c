@@ -221,7 +221,9 @@ void report_grbl_settings() {
     printPgmString(PSTR(" (homing feed, mm/min)\r\n$25=")); printFloat_SettingValue(settings.homing_seek_rate);
     printPgmString(PSTR(" (homing seek, mm/min)\r\n$26=")); print_uint8_base10(settings.homing_debounce_delay);
     printPgmString(PSTR(" (homing debounce, msec)\r\n$27=")); printFloat_SettingValue(settings.homing_pulloff);
-    printPgmString(PSTR(" (homing pull-off, mm)\r\n$30="));
+    printPgmString(PSTR(" (homing pull-off, mm)\r\n$29="));
+    print_uint8_base10(settings.punch_mode);
+    printPgmString(PSTR(" (punch mode)\r\n$30="));
     print_uint8_base10(bit_istrue(settings.punch_actuator_invert_mask, BITFLAG_PUNCH_ACTUATOR_DOWN));
     printPgmString(PSTR(" (punch actuator down invert, bool)\r\n$31="));
     print_uint8_base10(bit_istrue(settings.punch_actuator_invert_mask, BITFLAG_PUNCH_ACTUATOR_UP));
@@ -229,8 +231,9 @@ void report_grbl_settings() {
     print_uint8_base10(bit_istrue(settings.punch_sensor_invert_mask, BITFLAG_PUNCH_SENSOR_DOWN));
     printPgmString(PSTR(" (punch sensor down invert, bool)\r\n$33="));
     print_uint8_base10(bit_istrue(settings.punch_sensor_invert_mask, BITFLAG_PUNCH_SENSOR_UP));
-    printPgmString(PSTR(" (punch sensor up invert, bool)\r\n"));
-
+    printPgmString(PSTR(" (punch sensor up invert, bool)\r\n$40="));
+    print_uint32_base10(settings.punch_stepper_delay);
+    printPgmString(PSTR(" (punch stepper delay in micros)\r\n"));
   #endif
   
   // Print axis settings

@@ -76,7 +76,11 @@
     #define PUNCH_SENSOR_UP_BIT       5  // Uno Analog Pin 4
     #define PUNCH_SENSOR_UP_MASK      (1<<PUNCH_SENSOR_UP_BIT)
 
-    
+    //
+    // for stepper
+    //
+    #define PUNCH_STEPPER_CLK_BIT  PUNCH_DOWN_ENABLE_BIT
+    #define PUNCH_STEPPER_DIR_BIT  PUNCH_UP_ENABLE_BIT
 
 #endif
 

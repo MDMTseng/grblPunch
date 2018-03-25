@@ -22,7 +22,7 @@
 #define grbl_h
 
 // Grbl versioning system
-#define GRBL_VERSION "0.9j_punch"
+#define GRBL_VERSION "0.9j_punch_v2"
 #define GRBL_VERSION_BUILD "20151023"
 
 // Define standard libraries used by Grbl.

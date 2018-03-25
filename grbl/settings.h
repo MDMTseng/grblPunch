@@ -27,7 +27,7 @@
 
 // Version of the EEPROM data. Will be used to migrate existing data from older versions of Grbl
 // when firmware is upgraded. Always stored in byte 0 of eeprom
-#define SETTINGS_VERSION 9  // NOTE: Check settings_reset() when moving to next version.
+#define SETTINGS_VERSION 10  // NOTE: Check settings_reset() when moving to next version.
 
 // Define bit flag masks for the boolean settings in settings.flag.
 #define BITFLAG_REPORT_INCHES      bit(0)
@@ -81,6 +81,10 @@
 #define DEFAULT_PUNCH_ACTUATOR_INVERT_MASK 0
 #define DEFAULT_PUNCH_SENSOR_INVERT_MASK 0
 
+#define PUNCH_MODE_ACTUATORS 0
+#define PUNCH_MODE_STEPPER 1 // STEPPER HANDLING for PUNCH
+#define DEFAULT_PUNCH_MODE 0
+
 #define BITFLAG_PUNCH_ACTUATOR_UP bit(0)
 #define BITFLAG_PUNCH_ACTUATOR_DOWN bit(1)
 
@@ -113,8 +117,14 @@ typedef struct {
   float homing_pulloff;
 
   // grblPunch settings
+  uint8_t punch_mode;
+  // grblPunch actuators settings
   uint8_t punch_actuator_invert_mask;
   uint8_t punch_sensor_invert_mask;
+
+  // grblPunch actuators settings
+  float punch_stepper_delay;
+  float punch_stepper_acceleration;
 
 } settings_t;
 extern settings_t settings;

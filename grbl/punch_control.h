@@ -26,6 +26,9 @@
 // Initializes punch pins and hardware if enabled.
 void punch_init();
 
+// homing
+void punch_homing();
+
 // punch a hole
 void punch();
 

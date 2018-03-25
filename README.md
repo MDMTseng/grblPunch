@@ -1,5 +1,4 @@
-
-#Patch for GRBL project supporting the creation of punch machine for barrel organs.
+# GRBL_punch : GRBL enhanced project for punch machine
 
 The original GRBL Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl) this project is a fork specialized in punch machines as below. It has a X and Y axis plus a punch command for punching holes in the barrel organ book.
 
@@ -7,24 +6,11 @@ The original GRBL Project is located at : [http://github.com/grbl/grbl](http://g
 
 Punch machine designed and constructed by Jean Pierre Rosset.
 
+## Introduction
 
-##Introduction
+This project add a new <b>M100 GCode</b> command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire punch actuators (bidirectionnal), electric motors  (unidirectional),  stepper motors (pulses), and associated sensors
 
-This patch add a new <b>M100 GCode</b> command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire the punch actuators and sensor and use them in a GCode program
-
-The punch cycle introducted is the following
-
-- activate the punch down actuator
-- wait for the punch to be on bottom (wait the activation of the punchdown sensor)
-- activate the punch up actuator
-- wait for the punch to be up
-
-at least you must have two sensors for the punch positions (up and down). the activation of the up actuator is optional as some punch actuator, once desactivated, move up the punch.
-
-
-Only Arduino Uno CPU is supported yet in this version.
-
-##Grbl introducted modifications
+## Grbl 0.9 introduced modifications
 
 In the adjustment of grbl software :
 
@@ -36,24 +22,88 @@ All other pins are remained the same.
 
 
 
-##Arduino Uno connexions used by this patch
+### Several command modes for the punch :
+
+In the V2 (march 2018), 3 modes are possible in the command handling. The mode is a configuration settings introduced in the V2 version ($29 setting)
+
+#### Mode : 0 -> 2 actuators command, 2 sensors (up / down)
+
+The punch cycle introducted is the following
+
+- activate the punch down actuator
+- wait for the punch to be on bottom (wait the activation of the punchdown sensor)
+- activate the punch up actuator
+- wait for the punch to be up
+
+at least you must have two sensors for the punch positions (up and down). the activation of the up actuator is optional as some punch actuator, once desactivated, move up the punch.
+
+#### Mode : 1 -> 1 actuator command, 1 sensor (up)
+
+This mode handle a simplified version of the command. The command is as follow, 
+
+- activate the motor
+- wait for the up sensor to be unactivated
+- wait for the sensor to be activated
+- unactivate the motor
+
+#### Mode : 10 -> 1 stepper command, 1 sensor (up)
+
+This mode handle a stepper, with clock pulse for the punch. the cycle is as follow :
+
+- activate pulse for the stepper (clk)
+- wait for the up sensor to be unactivated
+- wait for the sensor to be activated
+- stop stepper pulses
 
 
-##Schematic View
+
+Only Arduino Uno CPU is supported yet in this version.
+
+
+
+## Arduino Uno connexions
+
+The D12 and D13 pins are used for controlling motors, these can have several meaning depending on the selected Mode.
+
+The A4 and A5 pins are used for sensors.
+
+# Default Mode (0) :
+
+
 
 ![](wiring_schema.png)
 
+## Prototype view for default mode
 
-##Prototype view
+
 
 ![](proto_view.png)
 
-##Video demonstrating the new GCode Command
+
+
+# Mode 1 : Simple Actuator and Sensor
+
+This mode control a motor with only one sensor (up).
+
+@@ schema 
+
+
+
+# Mode 10 : Stepper control
+
+
+
+This mode control a stepper motor with only one sensor.
+
+
+
+
+
+## Video demonstrating the new M100 GCode Command
 
 [https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
 
-
-#Install the Grbl Punch software on Arduino Uno
+# Install the Grbl Punch software on Arduino Uno
 
 the Easiest way to install the software is to use the XLoader software 
 
@@ -76,8 +126,7 @@ You can then use the universal code sender to connect and configure the elements
 
 ![](tutorial/ucs1.png)
 
-
-##Settings 
+## Settings 
 
 Additional settings are introducted in this version of grbl, $30, $31, $32, $33 for adjusting the behaviour of the punch cycle, depending on the actuator and sensors used.
 
@@ -180,14 +229,18 @@ you can view the associated parameters in launching the $$ command
 	$132=200.000 (z max travel, mm)
 
 
-you can change a setting value using
+you can change a setting value using :
 
 	$33=1
 
 
 
 
-##Improvements - RoadMap
+## Improvements - RoadMap
+
+<b>2018 - March</b>
+
+- add support for Electric motor, CNC motor
 
 <b>2016 - February</b>
 

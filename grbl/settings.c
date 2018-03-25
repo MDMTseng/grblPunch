@@ -94,6 +94,7 @@ void settings_restore(uint8_t restore_flag) {
 
     settings.punch_actuator_invert_mask = DEFAULT_PUNCH_ACTUATOR_INVERT_MASK;
     settings.punch_sensor_invert_mask = DEFAULT_PUNCH_SENSOR_INVERT_MASK;
+    settings.punch_mode = DEFAULT_PUNCH_MODE;
 
 	write_global_settings();
   }
@@ -271,6 +272,9 @@ uint8_t settings_store_global_setting(uint8_t parameter, float value) {
       case 27: settings.homing_pulloff = value; break;
 
       // punch settings
+      case 29:
+            settings.punch_mode = int_value; break;
+            ////////////////////// PUNCH MODE ACTUATORS PARAMETERS
       case 30: 
             if(int_value) {
                 settings.punch_actuator_invert_mask |= BITFLAG_PUNCH_ACTUATOR_DOWN;
@@ -291,6 +295,12 @@ uint8_t settings_store_global_setting(uint8_t parameter, float value) {
                 settings.punch_sensor_invert_mask |= BITFLAG_PUNCH_SENSOR_UP;
             } else { settings.punch_sensor_invert_mask &= ~BITFLAG_PUNCH_SENSOR_UP; }
             break;
+            ////////////////////////// PUNCH MODE STEPPER PARAMETERS
+       case 40:
+            settings.punch_stepper_delay = value; break;
+       case 41:
+            settings.punch_stepper_acceleration = value; break; 
+
       default: 
         return(STATUS_INVALID_STATEMENT);
     }

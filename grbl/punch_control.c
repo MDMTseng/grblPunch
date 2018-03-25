@@ -26,7 +26,46 @@
 #define COMMAND_PUNCH_DOWN 1
 #define COMMAND_PUNCH_UP 2
 
+typedef struct {
+     void (*punch_ext_init)();
+     void (*punch_ext_homing)();
+     void (*punch_ext)();
+     void (*punch_ext_stop)();
+} punch_command_flavor ;
+
+// object oriented punch command
+// depending on configuration, the punch style may
+// be adjust with a vtble referring internal specific 
+// functions
+//
+
+// forward
+void v_punch_init();
+void v_punch_homing();
+void v_punch();
+void v_punch_stop();
+
+punch_command_flavor PUNCH_ACTUATORS;
+
+punch_command_flavor *PUNCH_CURRENT; 
+
+
+//////////////////////////////////////////////////////////////////////
+// generic methods
+
 void set_punch_bit(uint8_t bit, uint8_t value) 
+{
+    if(value) {
+        PUNCH_PORT |= (1 << bit);
+    } else {
+        PUNCH_PORT &= ~(1<< bit);
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// 
+void v_set_punch_bit_with_inverted(uint8_t bit, uint8_t value) 
 {
     uint8_t inverted = 0;
     if (bit == PUNCH_DOWN_ENABLE_BIT) {
@@ -45,22 +84,21 @@ void set_punch_bit(uint8_t bit, uint8_t value)
 }
 
 
-void punch_activate_actuator(int direction)
+void v_punch_activate_actuator(int direction)
 {
    if (direction == COMMAND_PUNCH_UNACTIVATED) {
-     set_punch_bit(PUNCH_DOWN_ENABLE_BIT, 0);
-     set_punch_bit(PUNCH_UP_ENABLE_BIT, 0);
+     v_set_punch_bit_with_inverted(PUNCH_DOWN_ENABLE_BIT, 0);
+     v_set_punch_bit_with_inverted(PUNCH_UP_ENABLE_BIT, 0);
    } else if (direction == COMMAND_PUNCH_DOWN) {
-     set_punch_bit(PUNCH_UP_ENABLE_BIT, 0);
-     set_punch_bit(PUNCH_DOWN_ENABLE_BIT, 1);
+     v_set_punch_bit_with_inverted(PUNCH_UP_ENABLE_BIT, 0);
+     v_set_punch_bit_with_inverted(PUNCH_DOWN_ENABLE_BIT, 1);
    } else if (direction == COMMAND_PUNCH_UP) {
-     set_punch_bit(PUNCH_DOWN_ENABLE_BIT, 0);
-     set_punch_bit(PUNCH_UP_ENABLE_BIT, 1);
+     v_set_punch_bit_with_inverted(PUNCH_DOWN_ENABLE_BIT, 0);
+     v_set_punch_bit_with_inverted(PUNCH_UP_ENABLE_BIT, 1);
    }
 }
 
 void wait_a_bit() {
-        unsigned int r = 4; 
         uint32_t i = 100000;
         while (i-- != 0){
        	__asm__ __volatile__ (
@@ -72,39 +110,37 @@ void wait_a_bit() {
 }
 
 
-void punch_init()
+void v_punch_init()
 {    
-
-  #ifndef CPU_MAP_ATMEGA328P
-    #error("unsupported cpu for punch machine, only arduino supported")
-  #endif
-
   PUNCH_DDR |= (1<<PUNCH_DOWN_ENABLE_BIT); // Configure as output pin.
   PUNCH_DDR |= (1<<PUNCH_UP_ENABLE_BIT); // Configure as output pin.
 
   // configure the analog pins as input for sensor
   PUNCH_SENSOR_DDR = PUNCH_SENSOR_DDR & (PUNCH_SENSOR_DOWN_MASK | PUNCH_SENSOR_UP_MASK);
-  punch_activate_actuator(COMMAND_PUNCH_UP); 
+  v_punch_activate_actuator(COMMAND_PUNCH_UP); 
 
 }
 
+void v_punch_homing() {
+    // nothing to do for the moment  
+}
 
-
-void punch_stop()
+void v_punch_stop()
 {
-    punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
+    v_punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
 }
 
 
-uint8_t get_punch_sensor_value(uint8_t bit) 
+uint8_t v_get_punch_sensor_value(uint8_t thebit) 
 {
-    volatile uint8_t v = PUNCH_SENSOR_PIN & (PUNCH_SENSOR_DOWN_MASK | PUNCH_SENSOR_UP_MASK);
-    uint8_t value = bit_istrue(v, bit( bit));
+    volatile uint8_t v = PUNCH_SENSOR_PIN & (PUNCH_SENSOR_DOWN_MASK 
+                            | PUNCH_SENSOR_UP_MASK);
+    uint8_t value = bit_istrue(v, bit( thebit));
 
     uint8_t inverted = 0;
-    if (bit == PUNCH_SENSOR_DOWN_BIT) {
+    if (thebit == PUNCH_SENSOR_DOWN_BIT) {
         inverted = BITFLAG_PUNCH_SENSOR_DOWN;
-    } else if (bit == PUNCH_SENSOR_UP_BIT) {
+    } else if (thebit == PUNCH_SENSOR_UP_BIT) {
         inverted = BITFLAG_PUNCH_SENSOR_UP;
     }
 
@@ -118,11 +154,9 @@ uint8_t get_punch_sensor_value(uint8_t bit)
 }
 
 
+void v_punch_wait_not_sensor_state(int punchbittowait) {
 
-void punch_wait_sensor_state(int punchbittowait) {
-
-
-     while(get_punch_sensor_value(punchbittowait) == 0) {
+     while(v_get_punch_sensor_value(punchbittowait) != 0) {
         // noop    
        	__asm__ __volatile__ (
 		 "nop" "\n\t"
@@ -133,12 +167,150 @@ void punch_wait_sensor_state(int punchbittowait) {
 
 }
 
-void punch()
+void v_punch_wait_sensor_state(int punchbittowait) {
+
+     while(v_get_punch_sensor_value(punchbittowait) == 0) {
+        // noop    
+       	__asm__ __volatile__ (
+		 "nop" "\n\t"
+		 "nop" "\n\t"
+		 "nop" "\n\t"
+		 "nop"); //just waiting 4 cycles
+     }
+
+}
+
+void v_punch()
 {
+    // punch logic for actuator
+    v_punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
 
-    if (sys.state == STATE_CHECK_MODE) { return ;}
+    v_punch_activate_actuator(COMMAND_PUNCH_DOWN);
 
-    punch_stop();
+    v_punch_wait_sensor_state(PUNCH_SENSOR_DOWN_BIT);
+
+    v_punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
+
+    // activate the punch up
+    v_punch_activate_actuator(COMMAND_PUNCH_UP);
+
+    // activate the punch up, and release the down
+    v_punch_wait_sensor_state(PUNCH_SENSOR_UP_BIT);
+}
+
+void v_punch_one_way_with_only_one_sensor() {
+
+    // activate motor
+    v_punch_activate_actuator(COMMAND_PUNCH_DOWN);
+
+    // wait for the motor not up
+    v_punch_wait_not_sensor_state(PUNCH_SENSOR_UP_BIT);
+
+    // wait for the motor up again
+    v_punch_wait_sensor_state(PUNCH_SENSOR_UP_BIT);
+
+    // disable motor 
+    v_punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
+}
+
+//////////////////////////////////////////////////////////
+// stepper control
+
+void s_punch_init() {
+    v_punch_init();
+}
+
+void s_punch_homing() {
+
+}
+
+void s_punch() {
+
+     uint8_t value = 1;
+
+     float micros = settings.punch_stepper_delay; // in micros
+     float ticks = (micros / 1000000) / (1.0f / 16000000); 
+     
+     uint32_t delayLoop = (uint32_t)ticks / 4 ; // 4 cycles wait
+
+     int start = 0;
+     while (start < 2) {
+        while(v_get_punch_sensor_value(PUNCH_SENSOR_UP_BIT) == start) {
+            set_punch_bit(PUNCH_STEPPER_CLK_BIT, value);
+
+            // noop    
+            uint32_t i = delayLoop;
+            while (i-- != 0){
+                __asm__ __volatile__ (
+                 "nop" "\n\t"
+                 "nop" "\n\t"
+                 "nop" "\n\t"
+                 "nop"); //just waiting 4 cycles
+            }
+            // reverse bit
+            value = value ^ 1;
+        }
+        start ++;
+     }
+
+}
+
+void s_punch_stop() {
+    
+}
+
+//////////////////////////////////////////////////////////
+// external interface
+
+void punch_init() {
+
+  #ifndef CPU_MAP_ATMEGA328P
+    #error("unsupported cpu for punch machine, only arduino supported")
+  #endif
+
+  // default definition, on actuator logic
+  PUNCH_ACTUATORS 
+      .punch_ext_init = v_punch_init;
+  PUNCH_ACTUATORS 
+      .punch_ext_homing = v_punch_homing;
+  PUNCH_ACTUATORS 
+      .punch_ext = v_punch;
+  PUNCH_ACTUATORS 
+      .punch_ext_stop = v_punch_stop;
+
+
+  // vtable handling, without static init
+  switch(settings.punch_mode) {
+      case 1:
+        PUNCH_ACTUATORS.punch_ext = 
+           v_punch_one_way_with_only_one_sensor;
+      break;
+      case 10: // stepper
+        PUNCH_ACTUATORS 
+          .punch_ext_init = s_punch_init;
+        PUNCH_ACTUATORS 
+          .punch_ext_homing = s_punch_homing;
+        PUNCH_ACTUATORS 
+          .punch_ext = s_punch;
+        PUNCH_ACTUATORS 
+          .punch_ext_stop = s_punch_stop;
+      break;
+   }
+
+   PUNCH_CURRENT = &PUNCH_ACTUATORS;
+
+   // launch init
+   PUNCH_CURRENT->punch_ext_init();
+}
+
+void punch_homing() {
+    PUNCH_CURRENT->punch_ext_homing();
+}
+
+void punch() {
+   if (sys.state == STATE_CHECK_MODE) { return ;}
+
+    PUNCH_CURRENT->punch_ext_stop();
 
     // wait for current awaited commands
     protocol_buffer_synchronize();
@@ -148,28 +320,9 @@ void punch()
        if (sys.abort) { return; }
     } while ( sys.state != STATE_IDLE );
 
-    punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
-
-    punch_activate_actuator(COMMAND_PUNCH_DOWN);
-
-    // wait_a_bit();
-
-    punch_wait_sensor_state(PUNCH_SENSOR_DOWN_BIT);
-
-    // wait_a_bit();
-
-    punch_activate_actuator(COMMAND_PUNCH_UNACTIVATED);
-
-    // wait_a_bit();
-    
-    // activate the punch up
-    punch_activate_actuator(COMMAND_PUNCH_UP);
-
-    // wait_a_bit();
-    // activate the punch up, and release the down
-    punch_wait_sensor_state(PUNCH_SENSOR_UP_BIT);
-
-    // wait_a_bit();
+    PUNCH_CURRENT->punch_ext();
 }
 
-
+void punch_stop() {
+    PUNCH_CURRENT->punch_ext_stop();
+}

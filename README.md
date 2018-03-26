@@ -69,6 +69,8 @@ The A4 and A5 pins are used for sensors.
 
 # Default Mode (0) :
 
+in the 0 mode ($29 setting), the punch is activated using 2 wires (up and down), 2 sensors detect the punch position.
+
 
 
 ![](wiring_schema.png)
@@ -83,9 +85,11 @@ The A4 and A5 pins are used for sensors.
 
 # Mode 1 : Simple Actuator and Sensor
 
-This mode control a motor with only one sensor (up).
+This mode control a motor with only one wire, a sensor (up) permit the detection of the punch in the up position.
 
-@@ schema 
+
+
+
 
 
 
@@ -93,7 +97,7 @@ This mode control a motor with only one sensor (up).
 
 
 
-This mode control a stepper motor with only one sensor.
+This mode control a stepper motor with only one sensor. The D12 digital pin is used to generate pulses that  make the stepper motor move, until the up sensor is detected.
 
 
 
@@ -103,11 +107,9 @@ This mode control a stepper motor with only one sensor.
 
 [https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
 
-# Install the Grbl Punch software on Arduino Uno
+# How to Install the Grbl Punch software on Arduino Uno
 
-the Easiest way to install the software is to use the XLoader software 
-
-you can download this software at this url [http://russemotto.com/xloader/](http://russemotto.com/xloader/)
+The Easiest way to install the software is to use the XLoader software, you can download this software at this url [http://russemotto.com/xloader/](http://russemotto.com/xloader/)
 
 Launch XLoader
 
@@ -126,9 +128,21 @@ You can then use the universal code sender to connect and configure the elements
 
 ![](tutorial/ucs1.png)
 
-## Settings 
 
-Additional settings are introducted in this version of grbl, $30, $31, $32, $33 for adjusting the behaviour of the punch cycle, depending on the actuator and sensors used.
+
+# Settings 
+
+the first setting $29 define the punch control behaviour 
+
+| \$29 setting value | Description                              |
+| ------------------ | ---------------------------------------- |
+| 0                  | Default behaviour (2 actuators, 2 sensors) |
+| 1                  | one motor controlled by the activation (D12), one sensor detecting the up |
+| 10                 | on stepper motor controlled by pulses on D12, one sensor detecting the up position |
+
+
+
+Additional settings are introducted in this version of grbl, \$30, \$31, \$32,  \$33 for adjusting the behaviour of the punch cycle, depending on the actuator and sensors used.
 
 	>>>> $30=0 (punch actuator down invert, bool)
 	>>>> $31=0 (punch actuator up invert, bool)
@@ -211,6 +225,7 @@ you can view the associated parameters in launching the $$ command
 	$25=500.000 (homing seek, mm/min)
 	$26=250 (homing debounce, msec)
 	$27=1.000 (homing pull-off, mm)
+	>>>> $29=0
 	>>>> $30=0 (punch actuator down invert, bool)
 	>>>> $31=0 (punch actuator up invert, bool)
 	>>>> $32=0 (punch sensor down invert, bool)

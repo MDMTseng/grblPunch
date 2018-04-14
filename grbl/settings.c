@@ -297,7 +297,7 @@ uint8_t settings_store_global_setting(uint8_t parameter, float value) {
             break;
             ////////////////////////// PUNCH MODE STEPPER PARAMETERS
        case 40:
-            settings.punch_stepper_delay = value; break;
+            settings.punch_stepper_delay = int_value; break;
        case 41:
             settings.punch_stepper_acceleration = value; break; 
 

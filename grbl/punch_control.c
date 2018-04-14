@@ -228,13 +228,14 @@ void s_punch() {
 
      uint8_t value = 1;
 
-     float micros = settings.punch_stepper_delay; // in micros
-     float ticks = (micros / 1000000) / (1.0f / 16000000); 
+     uint16_t micros = settings.punch_stepper_delay; // in micros
+     uint16_t ticks = micros * 4;   // (micros / 1000000) / (1.0f / 16000000); 
      
-     uint32_t delayLoop = (uint32_t)ticks / 4 ; // 4 cycles wait
+     uint32_t delayLoop = ticks; // (uint32_t)ticks / 4 ; // 4 cycles wait
 
-     int start = 0;
-     while (start < 2) {
+     int start = 1;
+
+     while (start >= 0) {
         while(v_get_punch_sensor_value(PUNCH_SENSOR_UP_BIT) == start) {
             set_punch_bit(PUNCH_STEPPER_CLK_BIT, value);
 
@@ -250,7 +251,7 @@ void s_punch() {
             // reverse bit
             value = value ^ 1;
         }
-        start ++;
+        start --;
      }
 
 }

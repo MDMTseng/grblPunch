@@ -123,7 +123,7 @@ typedef struct {
   uint8_t punch_sensor_invert_mask;
 
   // grblPunch actuators settings
-  float punch_stepper_delay;
+  uint16_t punch_stepper_delay;
   float punch_stepper_acceleration;
 
 } settings_t;

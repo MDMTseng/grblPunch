@@ -233,7 +233,9 @@ void report_grbl_settings() {
     print_uint8_base10(bit_istrue(settings.punch_sensor_invert_mask, BITFLAG_PUNCH_SENSOR_UP));
     printPgmString(PSTR(" (punch sensor up invert, bool)\r\n$40="));
     print_uint32_base10(settings.punch_stepper_delay);
-    printPgmString(PSTR(" (punch stepper delay in micros)\r\n"));
+    printPgmString(PSTR(" (punch stepper delay in micros)\r\n$41="));
+    printFloat_SettingValue(settings.punch_stepper_acceleration);
+    printPgmString(PSTR(" (punch decay for period)\r\n"));
   #endif
   
   // Print axis settings

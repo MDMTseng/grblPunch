@@ -233,7 +233,11 @@ void s_punch() {
      
      uint32_t delayLoop = ticks; // (uint32_t)ticks / 4 ; // 4 cycles wait
      uint32_t nbDemiPeriod = 0;
-     uint16_t tickDecrementPer10SemiPeriods = 1;
+
+    
+     uint16_t delay_to_decrement_every_10_percent = 0;
+     delay_to_decrement_every_10_percent = (uint16_t)(settings.punch_stepper_acceleration) * 4 ;
+
      int start = 1;
 
      while (start >= 0) {
@@ -254,10 +258,10 @@ void s_punch() {
 
             if (start == 0) {
                 nbDemiPeriod ++;
-                if (nbDemiPeriod < 300 && ((nbDemiPeriod % 30) == 0) ) {
+                if (nbDemiPeriod < 200 && ((nbDemiPeriod % 20) == 0) ) {
                     // adjust the delay Loop
                     //
-                    delayLoop -= tickDecrementPer10SemiPeriods;
+                    delayLoop -= delay_to_decrement_every_10_percent; // 
                 }
             }
         }

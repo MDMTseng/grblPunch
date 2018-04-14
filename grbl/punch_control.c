@@ -232,7 +232,8 @@ void s_punch() {
      uint16_t ticks = micros * 4;   // (micros / 1000000) / (1.0f / 16000000); 
      
      uint32_t delayLoop = ticks; // (uint32_t)ticks / 4 ; // 4 cycles wait
-
+     uint32_t nbDemiPeriod = 0;
+     uint16_t tickDecrementPer10SemiPeriods = 1;
      int start = 1;
 
      while (start >= 0) {
@@ -250,6 +251,15 @@ void s_punch() {
             }
             // reverse bit
             value = value ^ 1;
+
+            if (start == 0) {
+                nbDemiPeriod ++;
+                if (nbDemiPeriod < 300 && ((nbDemiPeriod % 30) == 0) ) {
+                    // adjust the delay Loop
+                    //
+                    delayLoop -= tickDecrementPer10SemiPeriods;
+                }
+            }
         }
         start --;
      }

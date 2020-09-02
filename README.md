@@ -1,5 +1,5 @@
 
-#Patch for GRBL project supporting the creation of punch machine for barrel organs.
+# Patch for GRBL project supporting the creation of punch machine for barrel organs.
 
 The original GRBL Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl) this project is a fork specialized in punch machines as below. It has a X and Y axis plus a punch command for punching holes in the barrel organ book.
 
@@ -11,7 +11,7 @@ This GRBL project has a gui for handling the punch plan, and grbl control using 
 Punch machine designed and constructed by Jean Pierre Rosset.
 
 
-##Introduction
+## Introduction
 
 This patch add a new <b>M100 GCode</b> command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire the punch actuators and sensor and use them in a GCode program
 
@@ -27,7 +27,7 @@ at least you must have two sensors for the punch positions (up and down). the ac
 
 Only Arduino Uno CPU is supported yet in this version.
 
-##Grbl introducted modifications
+## Grbl introducted modifications
 
 In the adjustment of grbl software :
 
@@ -39,24 +39,24 @@ All other pins are remained the same.
 
 
 
-##Arduino Uno connexions used by this patch
+## Arduino Uno connexions used by this patch
 
 
-##Schematic View
+## Schematic View
 
 ![](wiring_schema.png)
 
 
-##Prototype view
+## Prototype view
 
 ![](proto_view.png)
 
-##Video demonstrating the new GCode Command
+## Video demonstrating the new GCode Command
 
 [https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
 
 
-#Install the Grbl Punch software on Arduino Uno
+# Install the Grbl Punch software on Arduino Uno
 
 the Easiest way to install the software is to use the XLoader software 
 
@@ -80,7 +80,7 @@ You can then use the universal code sender to connect and configure the elements
 ![](tutorial/ucs1.png)
 
 
-##Settings 
+## Settings 
 
 Additional settings are introducted in this version of grbl, $30, $31, $32, $33 for adjusting the behaviour of the punch cycle, depending on the actuator and sensors used.
 
@@ -190,7 +190,7 @@ you can change a setting value using
 
 
 
-##Improvements - RoadMap
+## Improvements - RoadMap
 
 <b>2016 - February</b>
 

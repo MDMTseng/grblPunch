@@ -312,6 +312,14 @@ uint8_t gc_execute_line(char *line)
               case 9: gc_block.modal.coolant = COOLANT_DISABLE; break;
             }
             break;
+            // PUNCH
+            //
+         #ifdef PUNCH_ACTIVATED
+          case 100:
+            word_bit = MODAL_GROUP_M100;   
+            gc_block.modal.punch = PUNCH_COMMAND_DOWN;
+            break;
+         #endif
           default: FAIL(STATUS_GCODE_UNSUPPORTED_COMMAND); // [Unsupported M command]
         }
       
@@ -991,6 +999,7 @@ uint8_t gc_execute_line(char *line)
               gc_state.feed_rate, gc_state.modal.feed_rate, axis_0, axis_1, axis_linear, false); 
           #endif
           break;
+#ifndef PUNCH_ACTIVATED
         case MOTION_MODE_PROBE_TOWARD: 
           // NOTE: gc_block.values.xyz is returned from mc_probe_cycle with the updated position value. So
           // upon a successful probing cycle, the machine position and the returned value should be the same.
@@ -1020,6 +1029,7 @@ uint8_t gc_execute_line(char *line)
           #else        
             mc_probe_cycle(gc_block.values.xyz, gc_state.feed_rate, gc_state.modal.feed_rate, true, true);
           #endif
+#endif
       }
     
       // As far as the parser is concerned, the position is now == target. In reality the
@@ -1029,6 +1039,14 @@ uint8_t gc_execute_line(char *line)
     }
   }
   
+  // [20. bis, punch]:
+  gc_state.modal.punch = gc_block.modal.punch;
+  if (gc_state.modal.punch == PUNCH_COMMAND_DOWN)
+  {
+    punch();
+    gc_state.modal.punch = PUNCH_DISABLED;
+  }
+ 
   // [21. Program flow ]:
   // M0,M1,M2,M30: Perform non-running program flow actions. During a program pause, the buffer may 
   // refill and can only be resumed by the cycle start run-time command.
@@ -1067,6 +1085,7 @@ uint8_t gc_execute_line(char *line)
 	}
     gc_state.modal.program_flow = PROGRAM_FLOW_RUNNING; // Reset program flow.
   }
+     
     
   // TODO: % to denote start of program.
   return(STATUS_OK);

@@ -44,6 +44,7 @@
 #define MODAL_GROUP_M4 11  // [M0,M1,M2,M30] Stopping
 #define MODAL_GROUP_M7 12 // [M3,M4,M5] Spindle turning
 #define MODAL_GROUP_M8 13 // [M7,M8,M9] Coolant control
+#define MODAL_GROUP_M100 14 // [M100] Punch control
 
 // #define OTHER_INPUT_F 14
 // #define OTHER_INPUT_S 15
@@ -120,6 +121,13 @@
 #define TOOL_LENGTH_OFFSET_CANCEL 0 // G49 (Default: Must be zero)
 #define TOOL_LENGTH_OFFSET_ENABLE_DYNAMIC 1 // G43.1
 
+// Modal Group M100 : punch
+#define PUNCH_DISABLED 0
+#define PUNCH_COMMAND_DOWN 1
+#define PUNCH_COMMAND_UP 2
+
+
+
 // Modal Group G12: Active work coordinate system
 // N/A: Stores coordinate system value (54-59) to change to.
 
@@ -155,6 +163,8 @@ typedef struct {
   uint8_t program_flow;    // {M0,M1,M2,M30}
   uint8_t coolant;         // {M7,M8,M9}
   uint8_t spindle;         // {M3,M4,M5}
+  uint8_t punch;         // {M100}
+
 } gc_modal_t;  
 
 typedef struct {

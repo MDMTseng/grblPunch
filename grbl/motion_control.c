@@ -259,6 +259,7 @@ void mc_homing_cycle()
   limits_init();
 }
 
+#ifndef PUNCH_ACTIVATED
 
 // Perform tool length probe cycle. Requires probe switch.
 // NOTE: Upon probe failure, the program will be stopped and placed into ALARM state.
@@ -332,7 +333,7 @@ void mc_homing_cycle()
     report_probe_parameters();
   #endif
 }
-
+#endif
 
 // Method to ready the system to reset by setting the realtime reset command and killing any
 // active processes in the system. This also checks if a system reset is issued while Grbl

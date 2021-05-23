@@ -23,7 +23,10 @@
 
 
 void spindle_init()
-{    
+{   
+    
+    #ifndef PUNCH_ACTIVATED
+     
   // Configure variable spindle PWM and enable pin, if requried. On the Uno, PWM and enable are
   // combined unless configured otherwise.
   #ifdef VARIABLE_SPINDLE
@@ -40,11 +43,13 @@ void spindle_init()
     SPINDLE_DIRECTION_DDR |= (1<<SPINDLE_DIRECTION_BIT); // Configure as output pin.
   #endif
   spindle_stop();
+#endif
 }
 
 
 void spindle_stop()
 {
+#ifndef PUNCH_ACTIVATED
   // On the Uno, spindle enable and PWM are shared. Other CPUs have seperate enable pin.
   #ifdef VARIABLE_SPINDLE
     TCCRA_REGISTER &= ~(1<<COMB_BIT); // Disable PWM. Output voltage is zero.
@@ -62,11 +67,13 @@ void spindle_stop()
 	  SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); // Set pin to low
 	#endif
   #endif  
+#endif
 }
 
 
 void spindle_set_state(uint8_t state, float rpm)
 {
+#ifndef PUNCH_ACTIVATED
   // Halt or set spindle direction and rpm. 
   if (state == SPINDLE_DISABLE) {
 
@@ -125,12 +132,15 @@ void spindle_set_state(uint8_t state, float rpm)
     #endif
 
   }
+#endif
 }
 
 
 void spindle_run(uint8_t state, float rpm)
 {
+#ifndef PUNCH_ACTIVATED
   if (sys.state == STATE_CHECK_MODE) { return; }
   protocol_buffer_synchronize(); // Empty planner buffer to ensure spindle is set when programmed.  
   spindle_set_state(state, rpm);
+#endif
 }

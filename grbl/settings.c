@@ -92,8 +92,12 @@ void settings_restore(uint8_t restore_flag) {
 	settings.max_travel[Y_AXIS] = (-DEFAULT_Y_MAX_TRAVEL);
 	settings.max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL);    
 
+    settings.punch_actuator_invert_mask = DEFAULT_PUNCH_ACTUATOR_INVERT_MASK;
+    settings.punch_sensor_invert_mask = DEFAULT_PUNCH_SENSOR_INVERT_MASK;
+
 	write_global_settings();
   }
+
   
   if (restore_flag & SETTINGS_RESTORE_PARAMETERS) {
 	uint8_t idx;
@@ -265,6 +269,28 @@ uint8_t settings_store_global_setting(uint8_t parameter, float value) {
       case 25: settings.homing_seek_rate = value; break;
       case 26: settings.homing_debounce_delay = int_value; break;
       case 27: settings.homing_pulloff = value; break;
+
+      // punch settings
+      case 30: 
+            if(int_value) {
+                settings.punch_actuator_invert_mask |= BITFLAG_PUNCH_ACTUATOR_DOWN;
+            } else { settings.punch_actuator_invert_mask &= ~BITFLAG_PUNCH_ACTUATOR_DOWN; }
+            break;
+      case 31: 
+            if(int_value) {
+                settings.punch_actuator_invert_mask |= BITFLAG_PUNCH_ACTUATOR_UP;
+            } else { settings.punch_actuator_invert_mask &= ~BITFLAG_PUNCH_ACTUATOR_UP; }
+            break;
+      case 32: 
+            if(int_value) {
+                settings.punch_sensor_invert_mask |= BITFLAG_PUNCH_SENSOR_DOWN;
+            } else { settings.punch_sensor_invert_mask &= ~BITFLAG_PUNCH_SENSOR_DOWN; }
+            break;
+       case 33: 
+            if(int_value) {
+                settings.punch_sensor_invert_mask |= BITFLAG_PUNCH_SENSOR_UP;
+            } else { settings.punch_sensor_invert_mask &= ~BITFLAG_PUNCH_SENSOR_UP; }
+            break;
       default: 
         return(STATUS_INVALID_STATEMENT);
     }

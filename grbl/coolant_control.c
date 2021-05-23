@@ -23,25 +23,30 @@
 
 void coolant_init()
 {
+#ifndef PUNCH_ACTIVATED
   COOLANT_FLOOD_DDR |= (1 << COOLANT_FLOOD_BIT);
   #ifdef ENABLE_M7
     COOLANT_MIST_DDR |= (1 << COOLANT_MIST_BIT);
   #endif
   coolant_stop();
+#endif
 }
 
 
 void coolant_stop()
 {
+    #ifndef PUNCH_ACTIVATED
   COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
   #ifdef ENABLE_M7
     COOLANT_MIST_PORT &= ~(1 << COOLANT_MIST_BIT);
   #endif
+#endif
 }
 
 
 void coolant_set_state(uint8_t mode)
 {
+#ifndef PUNCH_ACTIVATED
   if (mode == COOLANT_FLOOD_ENABLE) {
     COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
 
@@ -53,12 +58,15 @@ void coolant_set_state(uint8_t mode)
   } else {
     coolant_stop();
   }
+#endif
 }
 
 
 void coolant_run(uint8_t mode)
 {
+    #ifndef PUNCH_ACTIVATED
   if (sys.state == STATE_CHECK_MODE) { return; }
   protocol_buffer_synchronize(); // Ensure coolant turns on when specified in program.  
   coolant_set_state(mode);
+#endif
 }

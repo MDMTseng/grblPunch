@@ -1,116 +1,211 @@
 
-Fork from GRBL project to adjust its functionnalities for punching music cards.
+# Patch for GRBL project supporting the creation of punch machine for barrel organs.
+
+The original GRBL Project is located at : [http://github.com/grbl/grbl](http://github.com/grbl/grbl) this project is a fork specialized in punch machines as below. It has a X and Y axis plus a punch command for punching holes in the barrel organ book.
+
+This GRBL project has a gui for handling the punch plan, and grbl control using a PC, Mac or Linux. please see the associated software website : [www.barrel-organ-discovery.org](http://www.barrel-organ-discovery.org/site/krunch.html)
+
+
+![](tutorial/perfo_nov15.jpg)
+
+Punch machine designed and constructed by Jean Pierre Rosset.
+
+
+## Introduction
+
+This patch add a new <b>M100 GCode</b> command designed for punching machines. This new punching M100 command handle the punch cycle. This command permit to wire the punch actuators and sensor and use them in a GCode program
+
+The punch cycle introducted is the following
+
+- activate the punch down actuator
+- wait for the punch to be on bottom (wait the activation of the punchdown sensor)
+- activate the punch up actuator
+- wait for the punch to be up
+
+at least you must have two sensors for the punch positions (up and down). the activation of the up actuator is optional as some punch actuator, once desactivated, move up the punch.
+
+
+Only Arduino Uno CPU is supported yet in this version.
+
+## Grbl introducted modifications
+
+In the adjustment of grbl software :
+
+- The spindle is disconnected, and the pins are reuse for punching
+- The D12 and D13 are now used for handling the actuators for the punch
+- The A4 and A5 pins for detecting the state of the punch (up or down)
+
+All other pins are remained the same.
+
+
+
+## Arduino Uno connexions used by this patch
+
+
+## Schematic View
+
+![](wiring_schema.png)
+
+
+## Prototype view
+
+![](proto_view.png)
+
+## Video demonstrating the new GCode Command
+
+[https://www.youtube.com/watch?v=Sks70Pnujw8](https://www.youtube.com/watch?v=Sks70Pnujw8)
+
+
+# Install the Grbl Punch software on Arduino Uno
+
+the Easiest way to install the software is to use the XLoader software 
+
+you can download this software at this url [http://russemotto.com/xloader/](http://russemotto.com/xloader/)
+
+Launch XLoader
+
+![](tutorial/XLoader.png)
+
+Upload the grblPunch.hex file, 
+
+![](tutorial/upload.png)
+
+
+**Warning : please download the hole project as a zip file, and take the grblPunch.hex file from it. Using internet Explorer to save the file as a text file can corrupt the file.**
+
+That's all
+
+You can then use the universal code sender to connect and configure the elements.
+
+![](tutorial/ucs1.png)
+
+
+## Settings 
+
+Additional settings are introducted in this version of grbl, $30, $31, $32, $33 for adjusting the behaviour of the punch cycle, depending on the actuator and sensors used.
+
+	>>>> $30=0 (punch actuator down invert, bool)
+	>>>> $31=0 (punch actuator up invert, bool)
+	>>>> $32=1 (punch sensor down invert, bool)
+	>>>> $33=1 (punch sensor up invert, bool)
+
+the $32 and $33 settings permit to invert the detection of the punch position. 
+
+<table>
+<tr>
+	<th>setting</th>
+	<th>value</th>
+	<th>description</th>
+</tr>
+<tr>
+	<td>$30</td>
+	<td>0</td>
+	<td><b>The punch down</b> actuator is activated if the PIN is at <b>"5v"</b></td>
+</tr>
+<tr>
+	<td>$30</td>
+	<td>1</td>
+	<td><b>The punch down</b> actuator is activated if the PIN is at <b>"0v"</b></td>
+</tr>
+<tr>
+	<td>$31</td>
+	<td>0</td>
+	<td><b>The punch up</b> actuator is activated if the PIN is at <b>"5v"</b></td>
+</tr>
+<tr>
+	<td>$31</td>
+	<td>1</td>
+	<td><b>The punch up</b> actuator is activated if the PIN is at <b>"0v"</b></td>
+</tr>
+<tr>
+	<td>$32</td>
+	<td>0</td>
+	<td><b>The punch down</b> is detected down if the sensor is <b>"0v"</b></td>
+</tr>
+<tr>
+	<td>$32</td>
+	<td>1</td>
+	<td><b>The punch down</b> is detected down if the sensor is <b>"5v"</b></td>
+</tr>
+<tr>
+	<td>$33</td>
+	<td>0</td>
+	<td><b>The punch up</b> is detected up if the sensor is <b>"0v"</b></td>
+</tr>
+<tr>
+	<td>$33</td>
+	<td>1</td>
+	<td><b>The punch up</b> is detected up if the sensor is <b>"5v"</b></td>
+</tr>
+
+</table>
 
 
 
 
-![GitHub Logo](/doc/media/Grbl Logo 250px.png)
+you can view the associated parameters in launching the $$ command
+
+	$$
+	$0=10 (step pulse, usec)
+	$1=25 (step idle delay, msec)
+	$2=0 (step port invert mask:00000000)
+	$3=0 (dir port invert mask:00000000)
+	$4=0 (step enable invert, bool)
+	$5=0 (limit pins invert, bool)
+	$6=0 (probe pin invert, bool)
+	$10=3 (status report mask:00000011)
+	$11=0.010 (junction deviation, mm)
+	$12=0.002 (arc tolerance, mm)
+	$13=0 (report inches, bool)
+	$20=0 (soft limits, bool)
+	$21=0 (hard limits, bool)
+	$22=0 (homing cycle, bool)
+	$23=0 (homing dir invert mask:00000000)
+	$24=25.000 (homing feed, mm/min)
+	$25=500.000 (homing seek, mm/min)
+	$26=250 (homing debounce, msec)
+	$27=1.000 (homing pull-off, mm)
+	>>>> $30=0 (punch actuator down invert, bool)
+	>>>> $31=0 (punch actuator up invert, bool)
+	>>>> $32=0 (punch sensor down invert, bool)
+	>>>> $33=0 (punch sensor up invert, bool)
+	$100=250.000 (x, step/mm)
+	$101=250.000 (y, step/mm)
+	$102=250.000 (z, step/mm)
+	$110=500.000 (x max rate, mm/min)
+	$111=500.000 (y max rate, mm/min)
+	$112=500.000 (z max rate, mm/min)
+	$120=10.000 (x accel, mm/sec^2)
+	$121=10.000 (y accel, mm/sec^2)
+	$122=10.000 (z accel, mm/sec^2)
+	$130=200.000 (x max travel, mm)
+	$131=200.000 (y max travel, mm)
+	$132=200.000 (z max travel, mm)
 
 
-***
+you can change a setting value using
 
-Grbl is a no-compromise, high performance, low cost alternative to parallel-port-based motion control for CNC milling. It will run on a vanilla Arduino (Duemillanove/Uno) as long as it sports an Atmega 328. 
-
-The controller is written in highly optimized C utilizing every clever feature of the AVR-chips to achieve precise timing and asynchronous operation. It is able to maintain up to 30kHz of stable, jitter free control pulses.
-
-It accepts standards-compliant g-code and has been tested with the output of several CAM tools with no problems. Arcs, circles and helical motion are fully supported, as well as, all other primary g-code commands. Macro functions, variables, and most canned cycles are not supported, but we think GUIs can do a much better job at translating them into straight g-code anyhow.
-
-Grbl includes full acceleration management with look ahead. That means the controller will look up to 18 motions into the future and plan its velocities ahead to deliver smooth acceleration and jerk-free cornering.
-
-* [Licensing](https://github.com/grbl/grbl/wiki/Licensing): Grbl is free software, released under the GPLv3 license.
-
-* For more information and help, check out our **[Wiki pages!](https://github.com/grbl/grbl/wiki)** If you find that the information is out-dated, please to help us keep it updated by editing it or notifying our community! Thanks!
-
-* Lead Developer [_2011 - Current_]: Sungeun(Sonny) K. Jeon, Ph.D. (USA) aka @chamnit
-
-* Lead Developer [_2009 - 2011_]: Simen Svale Skogsrud (Norway). aka The Originator/Creator/Pioneer/Father of Grbl.
-
-***
-
-### Official Supporters of the Grbl CNC Project
-![Official Supporters](https://dl.dropboxusercontent.com/u/2221997/Contributors.png)
-
-***
-
-_**Master Branch:**_
-* [Grbl v0.9j Atmega328p 16mhz 115200baud with generic defaults](http://bit.ly/1I8Ey4S) _(2015-09-30)_
-* [Grbl v0.9j Atmega328p 16mhz 115200baud with ShapeOko2 defaults](http://bit.ly/1OjUSia) _(2015-09-30)_
-  - **IMPORTANT INFO WHEN UPGRADING TO GRBL v0.9 :** 
-  - Baudrate is now **115200** (Up from 9600). 
-  - Homing cycle updated. Located based on switch trigger, rather than release point.
-  - Variable spindle is now enabled by default. Z-limit(D12) and spindle enable(D11) have switched to access the hardware PWM on D11. Homing will not work if you do not re-wire your Z-limit switch to D12.
-
-_**Archives:**_
-* [Grbl v0.9i Atmega328p 16mhz 115200baud with generic defaults](http://bit.ly/1EiviDk) 
-* [Grbl v0.9i Atmega328p 16mhz 115200baud with ShapeOko2 defaults](http://bit.ly/1NYIfKl) 
-* [Grbl v0.9g Atmega328p 16mhz 115200baud with generic defaults](http://bit.ly/1m8E1Qa) 
-* [Grbl v0.9g Atmega328p 16mhz 115200baud with ShapeOko2 defaults](http://bit.ly/1kOAzig) 
-* [Grbl v0.8c Atmega328p 16mhz 9600baud](http://bit.ly/SSdCJE)
-* [Grbl v0.7d Atmega328p 16mhz 9600baud](http://bit.ly/ZhL15G)
-* [Grbl v0.6b Atmega328p 16mhz 9600baud](http://bit.ly/VD04A5)
-* [Grbl v0.51 Atmega328p 16mhz 9600baud](http://bit.ly/W75BS1)
-* [Grbl v0.6b Atmega168 16mhz 9600baud](http://bit.ly/SScWnE)
-* [Grbl v0.51 Atmega168 16mhz 9600baud](http://bit.ly/VXyrYu)
+	$33=1
 
 
-***
 
-##Update Summary for v0.9j
-  - **Restore EEPROM feature:** A new set of restore EEPROM features to help OEMs and users reset their Grbl installation to the build defaults. See Configuring Grbl Wiki for details.
-  
-##Update Summary for v0.9i
-  - **IMPORTANT:**
-    - **Homing cycle updated. Locates based on trigger point, rather than release point.**
-    - **System tweaks: $14 cycle auto-start has been removed. No more QUEUE state.**
-  - **New G-Codes** 
-  - **CoreXY Support**
-  - **Safety Door Support**
-  - **Full Limit and Control Pin Configurability**
-  - **Additional Compile-Time Feature Options**
 
-##Update Summary for v0.9h from v0.8
-  - **IMPORTANT:**
-    - **Default serial baudrate is now 115200! (Up from 9600)**
-    - **Z-limit(D12) and spindle enable(D11) pins have switched to support variable spindle!**
-  - **Super Smooth Stepper Algorithm**
-  - **Stability and Robustness Updates**
-  - **(x4)+ Faster Planner**
-  - **Compile-able via Arduino IDE!**
-  - **G-Code Parser Overhaul**
-  - **Independent Acceleration and Velocity Settings**
-  - **Soft Limits**
-  - **Probing**
-  - **Dynamic Tool Length Offsets**
-  - **Improved Arc Performance**
-  - **CPU Pin Mapping**
-  - **New Grbl SIMULATOR! (by @jgeisler and @ashelly)**
-  - **Configurable Real-time Status Reporting**
-  - **Updated Homing Routine**
-  - **Optional Limit Pin Sharing**
-  - **Optional Variable Spindle Speed Output**
-  - **Additional Compile-Time Feature Options**
+## Improvements - RoadMap
 
--
-``` 
-List of Supported G-Codes in Grbl v0.9 Master:
-  - Non-Modal Commands: G4, G10L2, G10L20, G28, G30, G28.1, G30.1, G53, G92, G92.1
-  - Motion Modes: G0, G1, G2, G3, G38.2, G38.3, G38.4, G38.5, G80
-  - Feed Rate Modes: G93, G94
-  - Unit Modes: G20, G21
-  - Distance Modes: G90, G91
-  - Arc IJK Distance Modes: G91.1
-  - Plane Select Modes: G17, G18, G19
-  - Tool Length Offset Modes: G43.1, G49
-  - Cutter Compensation Modes: G40
-  - Coordinate System Modes: G54, G55, G56, G57, G58, G59
-  - Control Modes: G61
-  - Program Flow: M0, M1, M2, M30*
-  - Coolant Control: M7*, M8, M9
-  - Spindle Control: M3, M4, M5
-  - Valid Non-Command Words: F, I, J, K, L, N, P, R, S, T, X, Y, Z
-```
+<b>2016 - February</b>
 
--------------
-Grbl is an open-source project and fueled by the free-time of our intrepid administrators and altruistic users. If you'd like to donate, all proceeds will be used to help fund supporting hardware and testing equipment. Thank you!
+- fix sensor detection, additional material has been setted up, we still need 2 sensors for the punch (eliminating the time in the equation)
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CUGXJHXA36BYW)
+<b>2015 - November</b>
+
+- <strike>by settings, 
+    - able to use a "pull up" logic on the hard limit
+    - or use two 0-1 detector on both side of the X axis</strike>
+
+<b>2015 - November</b>
+
+- Validation of the master branch with a real machine
+
+<b>Todo</b>
+
+- Check at startup that the punch is up, before starting (part of the homing cycle checks)

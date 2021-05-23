@@ -30,10 +30,11 @@
 
 DEVICE     ?= atmega328p
 CLOCK      = 16000000
-PROGRAMMER ?= -c avrisp2 -P usb
+PROGRAMMER ?= -C "C:\projets\pilotage_CNC\arduino-1.6.5-r2\hardware\tools\avr\etc\avrdude.conf"  -c stk500v1 -P COM4 -b115200 
+#PROGRAMMER ?= -c avrisp2 -P usb
 SOURCE    = main.c motion_control.c gcode.c spindle_control.c coolant_control.c serial.c \
              protocol.c stepper.c eeprom.c settings.c planner.c nuts_bolts.c limits.c \
-             print.c probe.c report.c system.c
+             print.c probe.c report.c system.c punch_control.c
 BUILDDIR = build
 SOURCEDIR = grbl
 # FUSES      = -U hfuse:w:0xd9:m -U lfuse:w:0x24:m
@@ -47,7 +48,7 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -I. -ffunction-sect
 OBJECTS = $(addprefix $(BUILDDIR)/,$(notdir $(SOURCE:.c=.o)))
 
 # symbolic targets:
-all:	grbl.hex
+all:	grblPunch.hex
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.c
 	$(COMPILE) -MMD -MP -c $< -o $@
@@ -63,7 +64,7 @@ $(BUILDDIR)/%.o: $(SOURCEDIR)/%.c
 	$(COMPILE) -S $< -o $(BUILDDIR)/$@
 
 flash:	all
-	$(AVRDUDE) -U flash:w:grbl.hex:i
+	$(AVRDUDE) -U flash:w:grblPunch.hex:i
 
 fuse:
 	$(AVRDUDE) $(FUSES)
@@ -73,18 +74,18 @@ install: flash fuse
 
 # if you use a bootloader, change the command below appropriately:
 load: all
-	bootloadHID grbl.hex
+	bootloadHID grblPunch.hex
 
 clean:
-	rm -f grbl.hex $(BUILDDIR)/*.o $(BUILDDIR)/*.d $(BUILDDIR)/*.elf
+	del grblPunch.hex $(BUILDDIR)/*.o $(BUILDDIR)/*.d $(BUILDDIR)/*.elf
 
 # file targets:
 $(BUILDDIR)/main.elf: $(OBJECTS)
 	$(COMPILE) -o $(BUILDDIR)/main.elf $(OBJECTS) -lm -Wl,--gc-sections
 
-grbl.hex: $(BUILDDIR)/main.elf
-	rm -f grbl.hex
-	avr-objcopy -j .text -j .data -O ihex $(BUILDDIR)/main.elf grbl.hex
+grblPunch.hex: $(BUILDDIR)/main.elf
+	del grblPunch.hex
+	avr-objcopy -j .text -j .data -O ihex $(BUILDDIR)/main.elf grblPunch.hex
 	avr-size --format=berkeley $(BUILDDIR)/main.elf
 # If you have an EEPROM section, you must also create a hex file for the
 # EEPROM and add it to the "flash" target.
